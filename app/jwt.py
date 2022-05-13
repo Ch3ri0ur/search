@@ -92,10 +92,10 @@ security = HTTPBasic()
 app = FastAPI()
 
 import time
+client = datastore.Client()
 
 def query_google_datastore(username: str):
     start_time = time.time()
-    client = datastore.Client()
     query = client.query(kind="users")
     query.add_filter("username", "=", username)
     results = list(query.fetch())
@@ -106,7 +106,6 @@ def query_google_datastore(username: str):
 
 def update_google_datastore(user: UserInDB):
     start_time = time.time()
-    client = datastore.Client()
     key = client.key("users", user.username)
     entity = datastore.Entity(key=key)
     entity.update(user.dict())
@@ -237,7 +236,6 @@ def query_google_custom_json(query: str):
         print(f"Title: {obj['title']} URL: {obj['link']}")
         return_obj.append({"title": obj["title"], "url": obj["link"]})
 
-    return return_obj
     json_obj = json.dumps(return_obj)
     print(json_obj)
 
