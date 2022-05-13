@@ -1,6 +1,7 @@
 anyio==3.5.0
 asgiref==3.5.1
 bcrypt==3.2.2
+beautifulsoup4==4.11.1
 cachetools==5.0.0
 certifi==2021.10.8
 cffi==1.15.0
@@ -10,6 +11,7 @@ colorama==0.4.4
 cryptography==37.0.2
 ecdsa==0.17.0
 fastapi==0.77.1
+google==3.0.0
 google-api-core==2.7.3
 google-auth==2.6.6
 google-cloud-core==2.3.0
@@ -39,6 +41,7 @@ rfc3986==1.5.0
 rsa==4.8
 six==1.16.0
 sniffio==1.2.0
+soupsieve==2.3.2.post1
 starlette==0.19.1
 typing_extensions==4.2.0
 urllib3==1.26.9
