@@ -32,19 +32,6 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
-# # could use some sql instead
-# fake_users_db = {
-#     "Bosch": {
-#         "username": "Bosch",
-#         "full_name": "Bosch",
-#         "email": "bosch@example.de",
-#         "hashed_password": "$2b$12$Etq1mfl8839MXH9qO0jB9uthN6GF70I/DhPcbnlM8veqA0SfUCjrW",
-#         "disabled": False,
-#     },
-# }
-
-
-
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -91,26 +78,21 @@ security = HTTPBasic()
 
 app = FastAPI()
 
-import time
 client = datastore.Client()
 
 def query_google_datastore(username: str):
-    start_time = time.time()
     query = client.query(kind="users")
     query.add_filter("username", "=", username)
     results = list(query.fetch())
-    print("query_google_datastore:", time.time() - start_time)
     if len(results) == 0:
         return None
     return results[0]
 
 def update_google_datastore(user: UserInDB):
-    start_time = time.time()
     key = client.key("users", user.username)
     entity = datastore.Entity(key=key)
     entity.update(user.dict())
     client.put(entity)
-    print("update_google_datastore:", time.time() - start_time)
     return 0 # could return the entity if needed
 
 def verify_password(plain_password, hashed_password):
@@ -219,7 +201,8 @@ def query_google_custom_list(query: str):
     return_obj = []
 
     for obj in content["items"]:
-        print(f"Title: {obj['title']} URL: {obj['link']}")
+        # print(f"Title: {obj['title']} URL: {obj['link']}")
+        # creating list of classes for pydantic
         return_obj.append(searchResult(title=obj["title"], url=obj["link"]))
 
     return return_obj
@@ -233,11 +216,11 @@ def query_google_custom_json(query: str):
     return_obj = []
 
     for obj in content["items"]:
-        print(f"Title: {obj['title']} URL: {obj['link']}")
+        # print(f"Title: {obj['title']} URL: {obj['link']}")
+        #creating list of python objects
         return_obj.append({"title": obj["title"], "url": obj["link"]})
 
     json_obj = json.dumps(return_obj)
-    print(json_obj)
 
     return json_obj
 
