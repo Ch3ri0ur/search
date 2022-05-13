@@ -31,10 +31,10 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
 # Basic route for testing
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Hello World! Please visit /docs for more controls. Username: Bosch, Password: Bosch"}
 
-@app.get("/search/{query}/")
-@app.post("/search/{query}/")
+@app.get("/{query}/")
+@app.post("/{query}/")
 def read_current_user(query: str, username: str = Depends(get_current_username)):
     # The Depends() propagates up and activates HTTPBasicCredentials
     # query is parsed from the URL

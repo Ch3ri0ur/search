@@ -251,6 +251,70 @@ def query_google_custom_json(query: str):
     return json.dumps(return_obj)
 
 
+# Endpoint actually not really necessary because FastAPI already converts to JSON
+@app.post("/string/{query}/")
+async def basic_search_returns_json_string(
+    query: str, user: str = Depends(get_current_username_basic)
+):
+    return query_google_custom_json(query)
+
+
+# Open endpoint for registering new users
+# Best use the /docs endpoint for this
+@app.post("/register")
+async def register_new_user(user_in: UserRegister):
+    res = await add_user(user_in)
+    if res != 0:
+        raise HTTPException(status_code=400, detail="Something went wrong")
+
+    return {"message": "User created successfully"}
+
+
+# Get token for JWT
+# This token can then be added to the Authorization header in the request
+# Authentication: Bearer <token>
+# See the /docs endpoint for more information (the curl command is displayed)
+@app.post("/token", response_model=Token)
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = authenticate_user(form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+# Endpoint to search, but authenticated with JWT
+@app.post("/jwt/{query}", response_model=searchResults)
+async def search_with_jwt_access_control(
+    query: str, current_user: User = Depends(get_current_active_user_jwt)
+):
+    return searchResults(result_list=query_google_custom_list(query))
+
+
+# Endpoint actually not really necessary because FastAPI already converts to JSON
+@app.post("/jwt/string/{query}", response_model=str)
+async def search_with_jwt_access_control_returns_string(
+    query: str, current_user: User = Depends(get_current_active_user_jwt)
+):
+    json_obj = query_google_custom_json(query)
+    return json_obj
+
+
+# Use get and post method, so that it can function well in a browser
+@app.get("/{query}", response_model=searchResults)
+@app.post("/{query}", response_model=searchResults)
+async def basic_search(
+    query: str, current_user: User = Depends(get_current_username_basic)
+):
+    return searchResults(result_list=query_google_custom_list(query))
+
 
 @app.get("/", response_class=HTMLResponse)
 def welcome_page():
@@ -286,63 +350,3 @@ def welcome_page():
         </script>
     </html>
     """
-
-
-# Use get and post method, so that it can function well in a browser
-@app.get("/{query}", response_model=searchResults)
-@app.post("/{query}", response_model=searchResults)
-async def basic_search(
-    query: str, current_user: User = Depends(get_current_username_basic)
-):
-    return searchResults(result_list=query_google_custom_list(query))
-
-# Endpoint actually not really necessary because FastAPI already converts to JSON
-@app.post("/string/{query}/")
-async def basic_search_returns_json_string(
-    query: str, user: str = Depends(get_current_username_basic)
-):
-    return query_google_custom_json(query)
-
-# Open endpoint for registering new users 
-# Best use the /docs endpoint for this
-@app.post("/register")
-async def register_new_user(user_in: UserRegister):
-    res = await add_user(user_in)
-    if res != 0:
-        raise HTTPException(status_code=400, detail="Something went wrong")
-
-    return {"message": "User created successfully"}
-
-# Get token for JWT 
-# This token can then be added to the Authorization header in the request
-# Authentication: Bearer <token>
-# See the /docs endpoint for more information (the curl command is displayed)
-@app.post("/token", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(form_data.username, form_data.password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
-    )
-    return {"access_token": access_token, "token_type": "bearer"}
-
-# Endpoint to search, but authenticated with JWT
-@app.post("/jwt/{query}", response_model=searchResults)
-async def search_with_jwt_access_control(
-    query: str, current_user: User = Depends(get_current_active_user_jwt)
-):
-    return searchResults(result_list=query_google_custom_list(query))
-
-# Endpoint actually not really necessary because FastAPI already converts to JSON
-@app.post("/jwt/string/{query}", response_model=str)
-async def search_with_jwt_access_control_returns_string(
-    query: str, current_user: User = Depends(get_current_active_user_jwt)
-):
-    json_obj = query_google_custom_json(query)
-    return json_obj
