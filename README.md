@@ -27,9 +27,19 @@ In the "docs" under "/register" and then "Try it out" a new user can be register
 
 Once registered that new user can be used to log in. The user is persistently stored in the Google Cloud Datastore.
 
+Once Authorized the other querys can be tested in the /docs:
+- press on /jwt/{query}
+- press "Try it out"
+- Add a query
+- press "Execute"
+- The results are displayed.
+
+The /docs also shows the way the return is structured.
+
+
 ### Return JSON
 
-The search proxy returns a list of results in JSON format. The results consist of the name and URL of the target webpage.
+The search proxy returns a list of results in JSON format. The results consist of the title and URL of the target webpage.
 
 ## Run Localy
 
