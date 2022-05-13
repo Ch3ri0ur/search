@@ -251,14 +251,6 @@ def query_google_custom_json(query: str):
     return json.dumps(return_obj)
 
 
-# Endpoint actually not really necessary because FastAPI already converts to JSON
-@app.post("/string/{query}/")
-async def basic_search_returns_json_string(
-    query: str, user: str = Depends(get_current_username_basic)
-):
-    return query_google_custom_json(query)
-
-
 # Open endpoint for registering new users
 # Best use the /docs endpoint for this
 @app.post("/register")
@@ -314,6 +306,14 @@ async def basic_search(
     query: str, current_user: User = Depends(get_current_username_basic)
 ):
     return searchResults(result_list=query_google_custom_list(query))
+
+
+# Endpoint actually not really necessary because FastAPI already converts to JSON
+@app.post("/string/{query}/")
+async def basic_search_returns_json_string(
+    query: str, user: str = Depends(get_current_username_basic)
+):
+    return query_google_custom_json(query)
 
 
 @app.get("/", response_class=HTMLResponse)
