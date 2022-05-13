@@ -267,7 +267,7 @@ async def read_users_me(
     query: str, current_user: User = Depends(get_current_active_user)
 ):
     json_obj = query_google_custom_json(query)
-    return {"content": json_obj}
+    return json_obj
 
 
 @app.post("/jwt/search/obj/{query}", response_model=searchResults)
