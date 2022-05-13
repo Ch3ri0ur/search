@@ -27,13 +27,16 @@ content = json.loads(response.content)
 
 return_obj = []
 
-for obj in content["items"]:
-    print(f"Title: {obj['title']} URL: {obj['link']}")
-    return_obj.append({"title": obj["title"], "url": obj["link"]})
+if not "items" in content:
+    print("No results found")
+if "items" in content:
+    for obj in content["items"]:
+        print(f"Title: {obj['title']} URL: {obj['link']}")
+        return_obj.append({"title": obj["title"], "url": obj["link"]})
 
-# return to json format
-json_obj = json.dumps(return_obj, indent = 4)
-print(json_obj)
+    # return to json format
+    json_obj = json.dumps(return_obj, indent = 4)
+    print(json_obj)
 
 # Variation 2
 # only returns URLs 
