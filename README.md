@@ -2,6 +2,13 @@
 
 This application exposes multiple endpoints, that allow the user to search Google. A cloud integration was added for learing purposes.
 
+
+It uses [FastAPI](https://fastapi.tiangolo.com/) as a fast Framework (similar to Flask). FastAPI sanitizes the input and automaticaly creates documentation for the endpoints. For the search the Custom Search Engine API from Google was used. The application is in a CI/CD pipeline: When changes are pushed to Github a Google Task is triggerd that rebuilds the the Docker container. The container is then deployed with Google Cloud Run. The application is routed through a custom domain (wpplr.cc). 
+
+## Search Method
+
+The Custom Search Engine API was used, because it is not really allowed to programatically scrape Google results and it provides more information. The googlesearch library works well but only returns the URLs. It does not use any secrets and was used for the MVP.
+
 # Where to find it
 
 The full application can be found under [search.wpplr.cc](https://search.wpplr.cc).
@@ -14,11 +21,15 @@ The standard username is: **Bosch** and the password is also: **Bosch**
 
 [search.wpplr.cc/Teacups](https://search.wpplr.cc/teacups) would query you to enter your credentials and then search for "Teacups". Same goes for the MVP variant.
 
-[search.wpplr.cc/docs](https://search.wpplr.cc/docs) exposes the whole API. At the top left you can log in. There are two methods basic and JWT. Username: **Bosch** , Password: **Bosch**.
+[search.wpplr.cc/docs](https://search.wpplr.cc/docs) explains the whole API and gives access. At the top left (Authorize) you can log in. There are two methods basic (HTTPBasic) and JWT (OAuth2PasswordBearer). Username: **Bosch** , Password: **Bosch** (ignore client_id and client_secret). Basic enables the lower queries and the JWT method unlocks the /jwt/ variants (See the lock icon).
 
 In the "docs" under "/register" and then "Try it out" a new user can be registered. Important are the username and password. Once the query is executed the return values and possible errors are displayed in the Server response section. One can also the curl request.
 
 Once registered that new user can be used to log in. The user is persistently stored in the Google Cloud Datastore.
+
+### Return JSON
+
+The search proxy returns a list of results in JSON format. The results consist of the name and URL of the target webpage.
 
 ## Run Localy
 
@@ -44,11 +55,10 @@ The JWT variant, the search.py file and datastore.py file depend on secrets and 
 
 These applications can also be started from the Dockerfiles. 
 
-# Architecture
 
-It uses [FastAPI](https://fastapi.tiangolo.com/) as a fast Framework (similar to Flask). The application is in a CI/CD pipeline and when changes are pushed a Google Task is triggerd that rebuilds the the Docker container. The container is then deployed with Google Cloud Run. The application is routed through a custom domain (wpplr.cc). 
+# Relevant files
 
-
+Here the relevant files in the Folder structure.
 ## App Folder
 
 The application is located in the jwt.py file.
