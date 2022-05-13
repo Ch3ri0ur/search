@@ -7,17 +7,13 @@ import secrets
 import httpx
 import os
 import json
-from dotenv import load_dotenv
 
-load_dotenv()
+from googlesearch import search
+
 app = FastAPI()
 
 # HTTPBasicCredentials for simple authentication
 security = HTTPBasic()
-
-# Secrets are stored in .env / environment variables
-google_api_key = os.getenv("google_api_key")
-search_engine_id = os.getenv("search_engine_id")
 
 def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
     # Hard code credentials for MVP
@@ -43,26 +39,16 @@ def read_current_user(query: str, username: str = Depends(get_current_username))
     # The Depends() propagates up and activates HTTPBasicCredentials
     # query is parsed from the URL
 
-    # standard is 10 responses, which matches the requirements
-    url = f"https://www.googleapis.com/customsearch/v1?key={google_api_key}&cx={search_engine_id}&q={query}"
+    query_results = []
 
-    # The response is a JSON file
-    response = httpx.get(url=url)
-
-    # parse returned JSON to make trimming easier
-    content = json.loads(response.content)
-
-    return_obj = []
-
-    for obj in content["items"]:
-        print(f"Title: {obj['title']} URL: {obj['link']}")
-        return_obj.append({"title": obj["title"], "url": obj["link"]})
+    # This method has a delay between queries (does not matter here) and scrapes the webpage 
+    for j in search(query, num=10, stop=10, pause=2):
+        query_results.append({"url": j})
 
     # FastAPI already transforms python objects into JSON
-    return return_obj
+    return query_results
     
     # otherwise you can do this:
-    # # return to json format
-    # json_obj = json.dumps(return_obj)
-
-    # return json_obj
+    # # return to json format 
+    
+    # return json.dumps(query_results)
