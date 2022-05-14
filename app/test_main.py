@@ -28,16 +28,16 @@ def test_search_google_success():
     auth = HTTPBasicAuth(username="Bosch", password="Bosch")
     response = client.get("/Bosch/", auth=auth)
     assert response.status_code == 200
-    # not a stable test -> live search results might change
-    assert response.json() == [
-        {"url": "https://www.bosch.de/"},
-        {"url": "https://www.bosch.de/produkte-und-services/"},
-        {"url": "https://www.bosch.de/produkte-und-services/zuhause/"},
-        {"url": "https://www.bosch.de/karriere/"},
-        {"url": "https://www.bosch.de/kontakt/"},
-        {"url": "http://www.bosch.de/"},
-        {"url": "https://de.wikipedia.org/wiki/Datei:Bosch-logotype.svg"},
-        {"url": "https://de.wikipedia.org/wiki/Robert_Bosch_GmbH"},
-        {"url": "https://www.bosch.com/"},
-        {"url": "https://www.bosch.com/careers/"},
-    ]
+    assert len(response.json()) == 10
+    # [
+    #     {"url": "https://www.bosch.com/"},
+    #     {"url": "https://www.bosch.com/company/"},
+    #     {"url": "https://www.bosch.com/careers/"},
+    #     {"url": "https://www.bosch.com/products-and-services/"},
+    #     {"url": "https://www.bosch.com/websites-worldwide/"},
+    #     {"url": "https://www.bosch-home.com/us/"},
+    #     {"url": "https://www.bosch-home.com/us/products/refrigerators"},
+    #     {"url": "https://www.bosch-home.com/us/products/cooking-baking"},
+    #     {"url": "https://www.bosch-home.com/us/products/dishwashers"},
+    #     {"url": "https://www.bosch-home.com/us/owner-support/contact-us"},
+    # ]
