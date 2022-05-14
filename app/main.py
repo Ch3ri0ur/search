@@ -36,7 +36,7 @@ async def root():
 
 @app.get("/{query}/")
 @app.post("/{query}/")
-def read_current_user(query: str, username: str = Depends(get_current_username)):
+def search_google(query: str, username: str = Depends(get_current_username)):
     # The Depends() propagates up and activates HTTPBasicCredentials
     # query is parsed from the URL
 
