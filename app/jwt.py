@@ -39,6 +39,7 @@ SECRET_KEY = os.getenv("secret_key")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+
 # classes for pydantic (helps create the documentation)
 class Token(BaseModel):
     access_token: str
@@ -88,6 +89,7 @@ app = FastAPI()
 
 # Google Datastore client (takes ~20s to instanciate)
 client = datastore.Client()
+
 
 # Get user from Google datastore
 def query_google_datastore(username: str):
@@ -223,7 +225,7 @@ def query_google_search(query: str):
 def query_google_custom_list(query: str):
     content = query_google_search(query)
     return_obj = []
-    if not "items" in content:
+    if "items" not in content:
         # no results
         return return_obj
 
@@ -239,7 +241,7 @@ def query_google_custom_json(query: str):
     content = query_google_search(query)
 
     return_obj = []
-    if not "items" in content:
+    if "items" not in content:
         # no results
         return return_obj
 
@@ -336,15 +338,15 @@ def welcome_page():
                 <input id="search-query" type="text" value="Bosch">
                 <input id="search-button" type="button" value="Search">
             </form>
-            
+
         </body>
         <script
             type="text/javascript">
             const Button = document.querySelector('#search-button');
-            const InputText = document.querySelector('#search-query'); 
-            Button.addEventListener('click', clickButton); 
-            function clickButton() { 
-                var URL = "/" + InputText.value; 
+            const InputText = document.querySelector('#search-query');
+            Button.addEventListener('click', clickButton);
+            function clickButton() {
+                var URL = "/" + InputText.value;
                 var win = window.open(URL, '_blank');
                 }
         </script>

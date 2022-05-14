@@ -3,11 +3,13 @@
 import httpx
 import os
 import json
+from googlesearch import search
 
 # Variation 1 with Google Custom Search API
 
 from dotenv import load_dotenv
-load_dotenv('../.env')
+
+load_dotenv("../.env")
 
 # Secrets are necessary for the Google Custom Search API and are stored in a .env file
 google_api_key = os.getenv("google_api_key")
@@ -27,7 +29,7 @@ content = json.loads(response.content)
 
 return_obj = []
 
-if not "items" in content:
+if "items" not in content:
     print("No results found")
 if "items" in content:
     for obj in content["items"]:
@@ -35,23 +37,22 @@ if "items" in content:
         return_obj.append({"title": obj["title"], "url": obj["link"]})
 
     # return to json format
-    json_obj = json.dumps(return_obj, indent = 4)
+    json_obj = json.dumps(return_obj, indent=4)
     print(json_obj)
 
 # Variation 2
-# only returns URLs 
-from googlesearch import search
+# only returns URLs
 
 query_results = []
 
-# This method has a delay between queries (does not matter here) and scrapes the webpage 
+# This method has a delay between queries (does not matter here) and scrapes the webpage
 for j in search(query, num=10, stop=10, pause=2):
     query_results.append({"url": j})
 
 # to json format
-json_obj = json.dumps(query_results, indent = 4)
+json_obj = json.dumps(query_results, indent=4)
 print(json_obj)
 
 
-# Of interest is, that they don't match, 
+# Of interest is, that they don't match,
 # the webscraped variation takes more information into account to tailor the results (e.g. german)
